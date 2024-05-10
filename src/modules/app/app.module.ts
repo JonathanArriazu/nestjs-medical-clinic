@@ -6,13 +6,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { PatientsModule } from '../patients/patients.module';
 import { MedicalHistoriesModule } from '../medical_histories/medical_histories.module';
+import { MedicalEntriesModule } from '../medical_entries/medical_entries.module';
+import { DoctorsModule } from '../doctors/doctors.module';
+import { DeseasesModule } from '../deseases/deseases.module';
+import { MedicalConsultationsModule } from '../medical_consultations/medical_consultations.module';
+import { PracticesModule } from '../practices/practices.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
     ConfigModule,
     PatientsModule,
-    MedicalHistoriesModule
+    MedicalHistoriesModule,
+    MedicalEntriesModule,
+    DoctorsModule,
+    MedicalConsultationsModule,
+    DeseasesModule,
+    PracticesModule
   ],
   controllers: [AppController],
   providers: [AppService],
