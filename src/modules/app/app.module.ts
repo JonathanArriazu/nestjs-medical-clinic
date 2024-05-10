@@ -5,12 +5,14 @@ import { databaseConfig } from 'src/config/database/data.base';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { PatientsModule } from '../patients/patients.module';
+import { MedicalHistoriesModule } from '../medical_histories/medical_histories.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
     ConfigModule,
-    PatientsModule
+    PatientsModule,
+    MedicalHistoriesModule
   ],
   controllers: [AppController],
   providers: [AppService],
