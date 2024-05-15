@@ -1,14 +1,23 @@
 import { BaseEntity } from "src/config/database/base.entity";
-import { Column, Entity } from "typeorm";
+import { MedicalEntry } from "src/modules/medical_entries/entities/medical_entry.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Practice extends BaseEntity {
-    @Column()
-    Duration: string;
+
+    @PrimaryGeneratedColumn()
+    practiceId: number;
 
     @Column()
-    Complications: string;  
+    duration: string;
 
     @Column()
-    Final_result: string;
+    complications: string;  
+
+    @Column()
+    finalResult: string;
+
+    @ManyToOne(() => MedicalEntry, entry => entry.Practices)
+    @JoinColumn({ name: 'medicalEntryId' })
+    MedicalEntry: MedicalEntry;
 }

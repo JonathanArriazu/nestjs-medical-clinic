@@ -8,9 +8,9 @@ import { PatientsModule } from '../patients/patients.module';
 import { MedicalHistoriesModule } from '../medical_histories/medical_histories.module';
 import { MedicalEntriesModule } from '../medical_entries/medical_entries.module';
 import { DoctorsModule } from '../doctors/doctors.module';
-import { DeseasesModule } from '../deseases/deseases.module';
 import { MedicalConsultationsModule } from '../medical_consultations/medical_consultations.module';
 import { PracticesModule } from '../practices/practices.module';
+import { DiseasesModule } from '../deseases/deseases.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { PracticesModule } from '../practices/practices.module';
     MedicalEntriesModule,
     DoctorsModule,
     MedicalConsultationsModule,
-    DeseasesModule,
+    DiseasesModule,
     PracticesModule
   ],
   controllers: [AppController],

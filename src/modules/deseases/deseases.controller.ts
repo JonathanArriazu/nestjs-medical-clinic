@@ -1,34 +1,34 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { DeseasesService } from './deseases.service';
-import { CreateDeseaseDto } from './dto/create-desease.dto';
-import { UpdateDeseaseDto } from './dto/update-desease.dto';
+import { DiseasesService } from './deseases.service';
+import { CreateDiseaseDto } from './dto/create-desease.dto';
+import { UpdateDiseaseDto } from './dto/update-desease.dto';
 
-@Controller('deseases')
-export class DeseasesController {
-  constructor(private readonly deseasesService: DeseasesService) {}
+@Controller('diseases')
+export class DiseasesController {
+  constructor(private readonly diseasesService: DiseasesService) {}
 
   @Post()
-  create(@Body() createDeseaseDto: CreateDeseaseDto) {
-    return this.deseasesService.create(createDeseaseDto);
+  create(@Body() createDiseaseDto: CreateDiseaseDto) {
+    return this.diseasesService.create(createDiseaseDto);
   }
 
   @Get()
   findAll() {
-    return this.deseasesService.findAll();
+    return this.diseasesService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.deseasesService.findOne(+id);
+    return this.diseasesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDeseaseDto: UpdateDeseaseDto) {
-    return this.deseasesService.update(+id, updateDeseaseDto);
+  update(@Param('id') id: string, @Body() updateDiseaseDto: UpdateDiseaseDto) {
+    return this.diseasesService.update(+id, updateDiseaseDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.deseasesService.remove(+id);
+    return this.diseasesService.remove(+id);
   }
 }

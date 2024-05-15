@@ -1,1 +1,1 @@
-export class CreateDeseaseDto {}
+export class CreateDiseaseDto {}

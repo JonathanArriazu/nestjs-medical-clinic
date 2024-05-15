@@ -1,22 +1,25 @@
 import { BaseEntity } from "src/config/database/base.entity";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Patient extends BaseEntity {
 
+    @PrimaryGeneratedColumn()
+    patientId: number;
+
     @Column()
-    Dni: number;
+    dni: number;
 
     @Column()
     name: string;  
 
     @Column()
-    Last_name: string;
+    lastName: string;
 
     @Column()
-    Birthday_date: Date;
+    birthdayDate: Date;
 
     @Column()
-    Medical_insurance: string;
+    medicalInsurance: string;
 
 }
