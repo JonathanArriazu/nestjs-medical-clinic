@@ -10,7 +10,7 @@ import { MedicalEntriesModule } from '../medical_entries/medical_entries.module'
 import { DoctorsModule } from '../doctors/doctors.module';
 import { MedicalConsultationsModule } from '../medical_consultations/medical_consultations.module';
 import { PracticesModule } from '../practices/practices.module';
-import { DiseasesModule } from '../deseases/diseases.module';
+import { DiseasesModule } from '../diseases/diseases.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 
