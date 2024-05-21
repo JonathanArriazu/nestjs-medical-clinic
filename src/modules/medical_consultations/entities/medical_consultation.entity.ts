@@ -1,5 +1,5 @@
 import { BaseEntity } from "src/config/database/base.entity";
-import { Disease } from "src/modules/deseases/entities/desease.entity";
+import { Disease } from "src/modules/deseases/entities/disease.entity";
 import { MedicalEntry } from "src/modules/medical_entries/entities/medical_entry.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 

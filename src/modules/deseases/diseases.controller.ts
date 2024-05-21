@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { DiseasesService } from './deseases.service';
-import { CreateDiseaseDto } from './dto/create-desease.dto';
-import { UpdateDiseaseDto } from './dto/update-desease.dto';
+import { DiseasesService } from './diseases.service';
+import { CreateDiseaseDto } from './dto/create-disease.dto';
+import { UpdateDiseaseDto } from './dto/update-disease.dto';
 
 @Controller('diseases')
 export class DiseasesController {
