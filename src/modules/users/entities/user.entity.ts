@@ -1,11 +1,8 @@
 import { BaseEntity } from "src/config/database/base.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
 
 @Entity()
 export class User extends BaseEntity {
-
-    @PrimaryGeneratedColumn()
-    userId: number;
 
     @Column({ unique: true })
     email: string;

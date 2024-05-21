@@ -1,11 +1,8 @@
 import { BaseEntity } from "src/config/database/base.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
 
 @Entity()
 export class Doctor extends BaseEntity {
-
-    @PrimaryGeneratedColumn()
-    doctorId: number;
 
     @Column()
     licenseNumber: number;

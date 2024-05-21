@@ -1,12 +1,10 @@
 import { BaseEntity } from "src/config/database/base.entity";
 import { Disease } from "src/modules/diseases/entities/disease.entity";
 import { MedicalEntry } from "src/modules/medical_entries/entities/medical_entry.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity()
 export class MedicalConsultation extends BaseEntity{
-    @PrimaryGeneratedColumn()
-    medicalConsultationId: number;
 
     @Column()
     consultationReason: string;

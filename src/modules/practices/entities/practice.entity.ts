@@ -1,12 +1,9 @@
 import { BaseEntity } from "src/config/database/base.entity";
 import { MedicalEntry } from "src/modules/medical_entries/entities/medical_entry.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity()
 export class Practice extends BaseEntity {
-
-    @PrimaryGeneratedColumn()
-    practiceId: number;
 
     @Column()
     duration: string;
