@@ -10,7 +10,9 @@ import { MedicalEntriesModule } from '../medical_entries/medical_entries.module'
 import { DoctorsModule } from '../doctors/doctors.module';
 import { MedicalConsultationsModule } from '../medical_consultations/medical_consultations.module';
 import { PracticesModule } from '../practices/practices.module';
-import { DiseasesModule } from '../deseases/deseases.module';
+import { DiseasesModule } from '../deseases/diseases.module';
+import { AuthModule } from '../auth/auth.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -22,7 +24,9 @@ import { DiseasesModule } from '../deseases/deseases.module';
     DoctorsModule,
     MedicalConsultationsModule,
     DiseasesModule,
-    PracticesModule
+    PracticesModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
