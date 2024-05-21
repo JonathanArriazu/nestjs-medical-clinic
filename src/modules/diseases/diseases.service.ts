@@ -5,22 +5,22 @@ import { UpdateDiseaseDto } from './dto/update-disease.dto';
 @Injectable()
 export class DiseasesService {
   create(createDiseaseDto: CreateDiseaseDto) {
-    return 'This action adds a new desease';
+    return 'This action adds a new disease';
   }
 
   findAll() {
-    return `This action returns all deseases`;
+    return `This action returns all diseases`;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} desease`;
+    return `This action returns a #${id} disease`;
   }
 
   update(id: number, updateDiseaseDto: UpdateDiseaseDto) {
-    return `This action updates a #${id} desease`;
+    return `This action updates a #${id} disease`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} desease`;
+    return `This action removes a #${id} disease`;
   }
 }
