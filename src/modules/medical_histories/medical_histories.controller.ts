@@ -7,28 +7,23 @@ import { UpdateMedicalHistoryDto } from './dto/update-medical_history.dto';
 export class MedicalHistoriesController {
   constructor(private readonly medicalHistoriesService: MedicalHistoriesService) {}
 
-  @Post()
-  create(@Body() createMedicalHistoryDto: CreateMedicalHistoryDto) {
-    return this.medicalHistoriesService.create(createMedicalHistoryDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.medicalHistoriesService.findAll();
+  @Get('')
+  findAllMedicalHistories() {
+    return this.medicalHistoriesService.findAllMedicalHistories();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.medicalHistoriesService.findOne(+id);
+  findOneMedicalHistory(@Param('id') id: string) {
+    return this.medicalHistoriesService.findOneMedicalHistory(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMedicalHistoryDto: UpdateMedicalHistoryDto) {
-    return this.medicalHistoriesService.update(+id, updateMedicalHistoryDto);
+  updateMedicalHistory(@Param('id') id: string, @Body() body: UpdateMedicalHistoryDto) {
+    return this.medicalHistoriesService.updateMedicalHistory(+id, body);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.medicalHistoriesService.remove(+id);
+  removeMedicalHistory(@Param('id') id: string) {
+    return this.medicalHistoriesService.removeMedicalHistory(+id);
   }
 }

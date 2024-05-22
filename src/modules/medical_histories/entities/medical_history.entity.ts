@@ -8,7 +8,7 @@ export class MedicalHistory extends BaseEntity {
 
     @OneToOne(() => Patient)
     @JoinColumn({ name: 'patientId' })
-        paciente: Patient;
+        patient: Patient;
 
     @OneToMany(() => MedicalEntry, entry => entry.MedicalHistory)
     MedicalEntry: MedicalEntry[];
