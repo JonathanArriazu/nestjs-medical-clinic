@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from './entities/patient.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { MedicalHistory } from '../medical_histories/entities/medical_history.entity';
+import { MedicalEntry } from '../medical_entries/entities/medical_entry.entity';
 
 @Injectable()
 export class PatientsService {
@@ -14,22 +15,27 @@ export class PatientsService {
     private readonly patientRepository: Repository<Patient>,
     @InjectRepository(MedicalHistory)
     private readonly medicalHistoryRepository: Repository<MedicalHistory>,
+    @InjectRepository(MedicalEntry)
+    private readonly medicalEntryRepository: Repository<MedicalEntry>,
   ) {}
 
   async createPatient(body: CreatePatientDto): Promise<Patient> {
     try {
-      const patient: Patient = this.patientRepository.create({
+      const medicalHistory = this.medicalHistoryRepository.create();
+
+      const patient = this.patientRepository.create({
         ...body,
-        medicalHistory: {},
+        medicalHistory,
       });
 
       const savedPatient = await this.patientRepository.save(patient);
       if (!savedPatient) {
         throw new Error('No se encontró resultado');
       }
+
       return savedPatient;
     } catch (error) {
-      throw new HttpException('Failed to find patients', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Failed to create patient', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

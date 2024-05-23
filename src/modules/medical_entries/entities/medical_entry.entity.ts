@@ -12,7 +12,7 @@ export class MedicalEntry extends BaseEntity {
     date: Date;
 
     @ManyToOne(() => MedicalHistory, medicalhistory => medicalhistory.MedicalEntry)
-    @JoinColumn({ name: 'medicalhistoryId' })
+    @JoinColumn({ name: 'medicalHistoryId' })
     MedicalHistory: MedicalHistory;
 
     @ManyToOne(() => Doctor)

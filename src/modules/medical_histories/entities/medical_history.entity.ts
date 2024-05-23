@@ -10,7 +10,9 @@ export class MedicalHistory extends BaseEntity {
     @JoinColumn({ name: 'patientId' })
         patient: Patient;
 
-    @OneToMany(() => MedicalEntry, entry => entry.MedicalHistory)
+    @OneToMany(() => MedicalEntry, entry => entry.MedicalHistory, {
+        cascade: true,
+      })
     MedicalEntry: MedicalEntry[];
 
 }
