@@ -9,26 +9,26 @@ export class DoctorsController {
 
   @Post()
   create(@Body() createDoctorDto: CreateDoctorDto) {
-    return this.doctorsService.create(createDoctorDto);
+    return this.doctorsService.createDoctor(createDoctorDto);
   }
 
   @Get()
   findAll() {
-    return this.doctorsService.findAll();
+    return this.doctorsService.findAllDoctors();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.doctorsService.findOne(+id);
+    return this.doctorsService.findOneDoctor(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
-    return this.doctorsService.update(+id, updateDoctorDto);
+    return this.doctorsService.updateDoctor(+id, updateDoctorDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.doctorsService.remove(+id);
+    return this.doctorsService.removeDoctor(+id);
   }
 }

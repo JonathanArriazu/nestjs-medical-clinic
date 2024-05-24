@@ -44,7 +44,9 @@ export class MedicalEntriesService {
 
   public async findAllMedicalEntries(): Promise<MedicalEntry[]> {
     try {
-      const medicalEntries: MedicalEntry[] = await this.medicalEntryRepository.find();
+      const medicalEntries: MedicalEntry[] = await this.medicalEntryRepository.find({
+        relations: ['Doctor']
+      });
       if (medicalEntries.length === 0) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
@@ -57,7 +59,8 @@ export class MedicalEntriesService {
   public async findOneMedicalEntry(id: number): Promise<MedicalEntry> {
     try {
       const medicalEntry: MedicalEntry = await this.medicalEntryRepository.findOne({
-        where: [{id}]
+        where: [{id}],
+        relations: ['Doctor']
       })
       if (!medicalEntry) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
