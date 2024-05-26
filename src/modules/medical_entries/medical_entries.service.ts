@@ -30,7 +30,7 @@ export class MedicalEntriesService {
   
     const newMedicalEntry = this.medicalEntryRepository.create({
       date,
-      MedicalHistory: medicalHistory,
+      medicalHistory: medicalHistory,
       Doctor: doctor,
     })
   

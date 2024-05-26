@@ -41,26 +41,36 @@ export class PatientsService {
 
   public async findAllPatients(): Promise<Patient[]> {
     try {
-      const patients: Patient[] = await this.patientRepository.find(
-        {
-          relations: ['medicalHistory']
-        }
-      );
+      const patients: Patient[] = await this.patientRepository.find({
+        relations: ['medicalHistory', 'medicalHistory.medicalEntries'],
+      });
       if (patients.length === 0) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
+
+      patients.forEach(patient => {
+        if (patient.medicalHistory && patient.medicalHistory.medicalEntries) {
+          patient.medicalHistory.medicalEntries = patient.medicalHistory.medicalEntries.map(entry => {
+            const medicalEntry: MedicalEntry = new MedicalEntry(); 
+            medicalEntry.id = entry.id; 
+            return medicalEntry;
+          });
+        }
+      });
+  
       return patients;
     } catch (error) {
       throw new HttpException('Failed to find patients', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  
 
   public async findOnePatient(id: number): Promise<Patient> {
     try {
       const patient: Patient = await this.patientRepository.findOne(
         {
           where: { id },
-          relations: ['medicalHistory'],
+          relations: ['medicalHistory', 'medicalHistory.medicalEntries'],
         }
       );
       if (!patient) {
