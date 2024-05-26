@@ -1,6 +1,8 @@
 
 import {
+  Column,
     CreateDateColumn,
+    DeleteDateColumn,
     PrimaryGeneratedColumn,
     UpdateDateColumn
   } from 'typeorm';
@@ -20,4 +22,11 @@ import {
       })
       updatedAt: Date;
       
+      @DeleteDateColumn({
+        type: 'timestamp',
+      })
+      deletedAt: Date;
+
+      @Column({ default: false })
+      isDeleted: boolean;
   }

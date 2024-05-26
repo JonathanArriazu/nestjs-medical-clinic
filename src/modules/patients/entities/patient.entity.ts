@@ -24,5 +24,5 @@ export class Patient extends BaseEntity {
         cascade: true,
       })
       medicalHistory: MedicalHistory;
-
+    
 }

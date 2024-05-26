@@ -84,6 +84,7 @@ export class PatientsService {
       if (patient.affected === 0) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
+      
       return patient;
     } catch (error) {
       throw new HttpException('Failed to update patient', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -92,7 +93,8 @@ export class PatientsService {
 
   public async removePatient(id: number): Promise<DeleteResult> {
     try {
-      const patient: DeleteResult = await this.patientRepository.delete(id);
+      const patient: DeleteResult = await this.patientRepository.softDelete(id);
+      await this.patientRepository.update(id, { isDeleted: true });
       if (patient.affected === 0) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
