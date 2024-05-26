@@ -1,26 +1,95 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMedicalConsultationDto } from './dto/create-medical_consultation.dto';
 import { UpdateMedicalConsultationDto } from './dto/update-medical_consultation.dto';
+import { MedicalConsultation } from './entities/medical_consultation.entity';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MedicalEntry } from '../medical_entries/entities/medical_entry.entity';
 
 @Injectable()
 export class MedicalConsultationsService {
-  create(createMedicalConsultationDto: CreateMedicalConsultationDto) {
-    return 'This action adds a new medicalConsultation';
+  constructor(
+    @InjectRepository(MedicalConsultation)
+    private readonly medicalConsultationRepository: Repository<MedicalConsultation>,
+    @InjectRepository(MedicalEntry)
+    private readonly medicalHistoryRepository: Repository<MedicalEntry>,
+  ) {}
+
+  public async createMedicalConsultation(body: CreateMedicalConsultationDto): Promise<MedicalConsultation> {
+    const {medicalEntryId} = body;
+    const medicalEntry = await this.medicalHistoryRepository.findOne({ where: { id: medicalEntryId}});
+
+    const newMedicalConsultation = this.medicalConsultationRepository.create({
+      ...body,
+      MedicalEntry: medicalEntry
+    })
+
+    try {
+      const savedMedicalConsultation = await this.medicalConsultationRepository.save(newMedicalConsultation);
+
+      if (!savedMedicalConsultation) {
+        throw new Error('No se encontró resultado');
+      }
+
+      return savedMedicalConsultation;
+    } catch (error) {
+      throw new HttpException('Failed to create medical consultation', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findAll() {
-    return `This action returns all medicalConsultations`;
+  public async findAllMedicalConsultations(): Promise<MedicalConsultation[]> {
+    try {
+      const medicalConsultation: MedicalConsultation[] = await this.medicalConsultationRepository.find();
+      if (medicalConsultation.length === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return medicalConsultation;
+    } catch (error) {
+      throw new HttpException('Failed to find medical consultations', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} medicalConsultation`;
+  public async findOneMedicalConsultation(id: number): Promise<MedicalConsultation> {
+    try {
+      const medicalConsultation: MedicalConsultation = await this.medicalConsultationRepository.findOne({
+        where: [{id}]
+      })
+      if (!medicalConsultation) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return medicalConsultation;
+    } catch (error) {
+      throw new HttpException('Failed to find medical consultation', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  update(id: number, updateMedicalConsultationDto: UpdateMedicalConsultationDto) {
-    return `This action updates a #${id} medicalConsultation`;
+  public async updateMedicalConsultation(
+    id: number,
+    body: UpdateMedicalConsultationDto,
+  ): Promise<UpdateResult> {
+    try {
+      const medicalConsultation: UpdateResult = await this.medicalConsultationRepository.update(
+        id,
+        body,
+      );
+      if (medicalConsultation.affected === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return medicalConsultation;
+    } catch (error) {
+      throw new HttpException('Failed to update medical consultation', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} medicalConsultation`;
+  public async removeMedicalConsultation(id: number): Promise<DeleteResult> {
+    try {
+      const medicalConsultation: DeleteResult = await this.medicalConsultationRepository.delete(id);
+      if (medicalConsultation.affected === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return medicalConsultation;
+    } catch (error) {
+      throw new HttpException('Failed to delete medical consultation', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

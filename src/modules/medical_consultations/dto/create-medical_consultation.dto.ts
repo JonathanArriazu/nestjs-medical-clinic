@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "@nestjs/class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "@nestjs/class-validator";
 
 export class CreateMedicalConsultationDto {
 
@@ -9,5 +9,9 @@ export class CreateMedicalConsultationDto {
     @IsNotEmpty()
     @IsString()
     isConfirmed: boolean;
+
+    @IsNotEmpty()
+    @IsNumber()
+    medicalEntryId: number;
 
 }

@@ -13,14 +13,16 @@ export class DoctorsService {
   ) {}
 
   async createDoctor(body: CreateDoctorDto): Promise<Doctor> {
-    try {
-      const newDoctor = this.doctorRepository.create(body);
+    const newDoctor = this.doctorRepository.create(body);
 
-      if (!newDoctor) {
+    try {
+      const savedDoctor = await this.doctorRepository.save(newDoctor);
+
+      if (!savedDoctor) {
         throw new Error('No se encontró resultado');
       }
 
-      return newDoctor;
+      return savedDoctor;
     } catch (error) {
       throw new HttpException('Failed to create patient', HttpStatus.INTERNAL_SERVER_ERROR);
     }

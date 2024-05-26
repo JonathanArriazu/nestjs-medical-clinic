@@ -9,26 +9,26 @@ export class MedicalConsultationsController {
 
   @Post()
   create(@Body() createMedicalConsultationDto: CreateMedicalConsultationDto) {
-    return this.medicalConsultationsService.create(createMedicalConsultationDto);
+    return this.medicalConsultationsService.createMedicalConsultation(createMedicalConsultationDto);
   }
 
   @Get()
   findAll() {
-    return this.medicalConsultationsService.findAll();
+    return this.medicalConsultationsService.findAllMedicalConsultations();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.medicalConsultationsService.findOne(+id);
+    return this.medicalConsultationsService.findOneMedicalConsultation(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMedicalConsultationDto: UpdateMedicalConsultationDto) {
-    return this.medicalConsultationsService.update(+id, updateMedicalConsultationDto);
+    return this.medicalConsultationsService.updateMedicalConsultation(+id, updateMedicalConsultationDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.medicalConsultationsService.remove(+id);
+    return this.medicalConsultationsService.removeMedicalConsultation(+id);
   }
 }

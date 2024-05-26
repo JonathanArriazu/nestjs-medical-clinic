@@ -28,14 +28,13 @@ export class MedicalEntriesService {
       throw new HttpException('Medical history or doctor not found', HttpStatus.NOT_FOUND);
     }
   
-    // Crear una nueva instancia de MedicalEntry
-    const newMedicalEntry = new MedicalEntry();
-    newMedicalEntry.date = date;
-    newMedicalEntry.MedicalHistory = medicalHistory;
-    newMedicalEntry.Doctor = doctor;
+    const newMedicalEntry = this.medicalEntryRepository.create({
+      date,
+      MedicalHistory: medicalHistory,
+      Doctor: doctor,
+    })
   
     try {
-      // Guardar la nueva entrada mÃ©dica
       return await this.medicalEntryRepository.save(newMedicalEntry);
     } catch (error) {
       throw new HttpException('Failed to create medical entry', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -45,7 +44,7 @@ export class MedicalEntriesService {
   public async findAllMedicalEntries(): Promise<MedicalEntry[]> {
     try {
       const medicalEntries: MedicalEntry[] = await this.medicalEntryRepository.find({
-        relations: ['Doctor']
+        relations: ['Doctor', 'Practices', 'MedicalConsultations']
       });
       if (medicalEntries.length === 0) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
@@ -60,7 +59,7 @@ export class MedicalEntriesService {
     try {
       const medicalEntry: MedicalEntry = await this.medicalEntryRepository.findOne({
         where: [{id}],
-        relations: ['Doctor']
+        relations: ['Doctor', 'Practices', 'MedicalConsultations']
       })
       if (!medicalEntry) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);

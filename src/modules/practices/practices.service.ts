@@ -1,26 +1,96 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePracticeDto } from './dto/create-practice.dto';
 import { UpdatePracticeDto } from './dto/update-practice.dto';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Practice } from './entities/practice.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MedicalHistory } from '../medical_histories/entities/medical_history.entity';
+import { MedicalEntry } from '../medical_entries/entities/medical_entry.entity';
 
 @Injectable()
 export class PracticesService {
-  create(createPracticeDto: CreatePracticeDto) {
-    return 'This action adds a new practice';
+  constructor(
+    @InjectRepository(Practice)
+    private readonly practiceRepository: Repository<Practice>,
+    @InjectRepository(MedicalEntry)
+    private readonly medicalHistoryRepository: Repository<MedicalEntry>,
+  ) {}
+
+  public async createPractice(body: CreatePracticeDto): Promise<Practice> {
+    const {medicalEntryId} = body;
+    const medicalEntry = await this.medicalHistoryRepository.findOne({ where: { id: medicalEntryId}});
+
+    const newPractice = this.practiceRepository.create({
+      ...body,
+      MedicalEntry: medicalEntry
+    })
+
+    try {
+      const savedPractice = await this.practiceRepository.save(newPractice);
+
+      if (!savedPractice) {
+        throw new Error('No se encontró resultado');
+      }
+
+      return savedPractice;
+    } catch (error) {
+      throw new HttpException('Failed to create practice', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findAll() {
-    return `This action returns all practices`;
+  public async findAllPractices(): Promise<Practice[]> {
+    try {
+      const practice: Practice[] = await this.practiceRepository.find();
+      if (practice.length === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return practice;
+    } catch (error) {
+      throw new HttpException('Failed to find practices', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} practice`;
+  public async findOnePractice(id: number): Promise<Practice> {
+    try {
+      const practice: Practice = await this.practiceRepository.findOne({
+        where: [{id}]
+      })
+      if (!practice) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return practice;
+    } catch (error) {
+      throw new HttpException('Failed to find practice', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  update(id: number, updatePracticeDto: UpdatePracticeDto) {
-    return `This action updates a #${id} practice`;
+  public async updatePractice(
+    id: number,
+    body: UpdatePracticeDto,
+  ): Promise<UpdateResult> {
+    try {
+      const practice: UpdateResult = await this.practiceRepository.update(
+        id,
+        body,
+      );
+      if (practice.affected === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return practice;
+    } catch (error) {
+      throw new HttpException('Failed to update practice', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} practice`;
+  public async removePractice(id: number): Promise<DeleteResult> {
+    try {
+      const practice: DeleteResult = await this.practiceRepository.delete(id);
+      if (practice.affected === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return practice;
+    } catch (error) {
+      throw new HttpException('Failed to delete practice', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

@@ -5,9 +5,11 @@ import { MedicalEntry } from './entities/medical_entry.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MedicalHistory } from '../medical_histories/entities/medical_history.entity';
 import { Doctor } from '../doctors/entities/doctor.entity';
+import { MedicalConsultation } from '../medical_consultations/entities/medical_consultation.entity';
+import { Practice } from '../practices/entities/practice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MedicalEntry, MedicalHistory, Doctor])],
+  imports: [TypeOrmModule.forFeature([MedicalEntry, MedicalHistory, Doctor, MedicalConsultation, Practice])],
   controllers: [MedicalEntriesController],
   providers: [MedicalEntriesService],
 })

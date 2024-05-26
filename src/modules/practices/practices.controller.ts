@@ -9,26 +9,26 @@ export class PracticesController {
 
   @Post()
   create(@Body() createPracticeDto: CreatePracticeDto) {
-    return this.practicesService.create(createPracticeDto);
+    return this.practicesService.createPractice(createPracticeDto);
   }
 
   @Get()
   findAll() {
-    return this.practicesService.findAll();
+    return this.practicesService.findAllPractices();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.practicesService.findOne(+id);
+    return this.practicesService.findOnePractice(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePracticeDto: UpdatePracticeDto) {
-    return this.practicesService.update(+id, updatePracticeDto);
+    return this.practicesService.updatePractice(+id, updatePracticeDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.practicesService.remove(+id);
+    return this.practicesService.removePractice(+id);
   }
 }
