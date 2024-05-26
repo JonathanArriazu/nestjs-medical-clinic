@@ -12,12 +12,26 @@ export class MedicalConsultationsService {
     @InjectRepository(MedicalConsultation)
     private readonly medicalConsultationRepository: Repository<MedicalConsultation>,
     @InjectRepository(MedicalEntry)
-    private readonly medicalHistoryRepository: Repository<MedicalEntry>,
+    private readonly medicalEntryRepository: Repository<MedicalEntry>,
   ) {}
 
   public async createMedicalConsultation(body: CreateMedicalConsultationDto): Promise<MedicalConsultation> {
     const {medicalEntryId} = body;
-    const medicalEntry = await this.medicalHistoryRepository.findOne({ where: { id: medicalEntryId}});
+    const medicalEntry = await this.medicalEntryRepository.findOne({ where: { id: medicalEntryId}});
+
+    if (!medicalEntry) {
+      throw new HttpException('Medical entry not found', HttpStatus.NOT_FOUND);
+    }
+
+    const existingPractices = await this.medicalEntryRepository
+      .createQueryBuilder('medicalEntry')
+      .innerJoin('medicalEntry.Practices', 'practice')
+      .where('medicalEntry.id = :id', { id: medicalEntryId })
+      .getCount();
+
+    if (existingPractices > 0) {
+      throw new HttpException('A Practice already exists for this medical entry', HttpStatus.BAD_REQUEST);
+    }
 
     const newMedicalConsultation = this.medicalConsultationRepository.create({
       ...body,

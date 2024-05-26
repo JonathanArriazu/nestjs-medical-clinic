@@ -49,6 +49,16 @@ export class MedicalEntriesService {
       if (medicalEntries.length === 0) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
+
+      medicalEntries.forEach(medicalEntry => {
+        if (medicalEntry.Practices && medicalEntry.Practices.length === 0) {
+          delete medicalEntry.Practices;
+        }
+        if (medicalEntry.MedicalConsultations && medicalEntry.MedicalConsultations.length === 0) {
+          delete medicalEntry.MedicalConsultations;
+        }
+      });
+
       return medicalEntries;
     } catch (error) {
       throw new HttpException('Failed to find medical histories', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,9 +71,19 @@ export class MedicalEntriesService {
         where: [{id}],
         relations: ['Doctor', 'Practices', 'MedicalConsultations']
       })
+      
       if (!medicalEntry) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
+
+      if (medicalEntry.Practices && medicalEntry.Practices.length === 0) {
+        delete medicalEntry.Practices;
+      }
+
+      if (medicalEntry.MedicalConsultations && medicalEntry.MedicalConsultations.length === 0) {
+        delete medicalEntry.MedicalConsultations;
+      }
+
       return medicalEntry;
     } catch (error) {
       throw new HttpException('Failed to find medical history', HttpStatus.INTERNAL_SERVER_ERROR);
