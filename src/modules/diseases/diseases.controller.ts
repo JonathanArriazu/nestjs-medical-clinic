@@ -1,7 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { DiseasesService } from './diseases.service';
 import { CreateDiseaseDto } from './dto/create-disease.dto';
 import { UpdateDiseaseDto } from './dto/update-disease.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../auth/role/role.guard';
+import { Roles } from '../auth/roles/roles.decorator';
+import { Role } from 'src/enums/role.enum';
 
 @Controller('diseases')
 export class DiseasesController {
