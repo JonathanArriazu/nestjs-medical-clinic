@@ -6,8 +6,8 @@ import { Response } from 'express';
 @Controller('pdf')
 export class DocumentController {
   @Get('download')
-  getFile(): StreamableFile {
-    const filePath = join(process.cwd(), 'src/uploads/prueba.pdf');
+  getFile(): any {
+    const filePath = 'C:\\Users\\famil\\OneDrive\\Escritorio\\prueba.pdf';
     const file = createReadStream(filePath);
 
     return new StreamableFile(file);
