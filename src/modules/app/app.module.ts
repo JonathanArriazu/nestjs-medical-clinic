@@ -13,6 +13,7 @@ import { PracticesModule } from '../practices/practices.module';
 import { DiseasesModule } from '../diseases/diseases.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
+import { DocumentModule } from '../document/document.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { UsersModule } from '../users/users.module';
     PracticesModule,
     AuthModule,
     UsersModule,
+    DocumentModule
   ],
   controllers: [AppController],
   providers: [AppService],
