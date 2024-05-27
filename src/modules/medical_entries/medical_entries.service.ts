@@ -41,14 +41,15 @@ export class MedicalEntriesService {
     }
   }
 
-  public async findAllMedicalEntries(): Promise<MedicalEntry[]> {
+  async findAllMedicalEntries(): Promise<MedicalEntry[]> {
     try {
-      const medicalEntries: MedicalEntry[] = await this.medicalEntryRepository.find({
-        relations: ['Doctor', 'Practices', 'MedicalConsultations', 'MedicalConsultations.Disease']
-      });
-      if (medicalEntries.length === 0) {
-        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
-      }
+      const medicalEntries: MedicalEntry[] = await this.medicalEntryRepository
+        .createQueryBuilder('medicalEntry')
+        .leftJoinAndSelect('medicalEntry.Doctor', 'Doctor')
+        .leftJoinAndSelect('medicalEntry.Practices', 'Practices')
+        .leftJoinAndSelect('medicalEntry.MedicalConsultations', 'MedicalConsultations')
+        .leftJoinAndSelect('MedicalConsultations.Disease', 'Disease')
+        .getMany();
 
       medicalEntries.forEach(medicalEntry => {
         if (medicalEntry.Practices && medicalEntry.Practices.length === 0) {
@@ -65,13 +66,17 @@ export class MedicalEntriesService {
     }
   }
 
-  public async findOneMedicalEntry(id: number): Promise<MedicalEntry> {
+  async findOneMedicalEntry(id: number): Promise<MedicalEntry> {
     try {
-      const medicalEntry: MedicalEntry = await this.medicalEntryRepository.findOne({
-        where: [{id}],
-        relations: ['Doctor', 'Practices', 'MedicalConsultations']
-      })
-      
+      const medicalEntry: MedicalEntry = await this.medicalEntryRepository
+        .createQueryBuilder('medicalEntry')
+        .leftJoinAndSelect('medicalEntry.Doctor', 'Doctor')
+        .leftJoinAndSelect('medicalEntry.Practices', 'Practices')
+        .leftJoinAndSelect('medicalEntry.MedicalConsultations', 'MedicalConsultations')        
+        .leftJoinAndSelect('MedicalConsultations.Disease', 'Disease')
+        .where('medicalEntry.id = :id', { id })
+        .getOne();
+
       if (!medicalEntry) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
