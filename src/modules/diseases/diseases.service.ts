@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDiseaseDto } from './dto/create-disease.dto';
 import { UpdateDiseaseDto } from './dto/update-disease.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Like, Repository, UpdateResult } from 'typeorm';
 import { Disease } from './entities/disease.entity';
 
 @Injectable()
@@ -30,15 +30,23 @@ export class DiseasesService {
     }
   }
 
-  public async findAllDiseases(): Promise<Disease[]> {
+  public async findAllDiseases(text?: string): Promise<Disease[]> {
     try {
-      const disease: Disease[] = await this.diseaseRepository.find();
-      if (disease.length === 0) {
-        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      let queryOptions = {};
+
+      if (text) {
+        queryOptions = { where: { name: Like(`%${text}%`) } };
       }
-      return disease;
+
+      const diseases: Disease[] = await this.diseaseRepository.find(queryOptions);
+
+      if (!text && diseases.length === 0) {
+        throw new HttpException('No diseases found', HttpStatus.NOT_FOUND);
+      }
+      
+      return diseases;
     } catch (error) {
-      throw new HttpException('Failed to find disease', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Failed to find diseases', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
