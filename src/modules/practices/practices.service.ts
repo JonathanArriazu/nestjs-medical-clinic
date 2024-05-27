@@ -43,7 +43,7 @@ export class PracticesService {
       const savedPractice = await this.practiceRepository.save(newPractice);
 
       if (!savedPractice) {
-        throw new Error('No se encontró resultado');
+        throw new Error('Failed to find result');
       }
 
       return savedPractice;

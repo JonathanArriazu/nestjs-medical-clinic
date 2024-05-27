@@ -19,6 +19,7 @@ export class MedicalEntriesService {
   ) {}
 
   async createMedicalEntry(body: CreateMedicalEntryDto): Promise<MedicalEntry> {
+    try {
     const { date, medicalHistoryId, doctorId } = body;
     const medicalHistory = await this.medicalHistoryRepository.findOne({ where: { id: medicalHistoryId } });
     const doctor = await this.doctorRepository.findOne({ where: { id: doctorId } });
@@ -34,7 +35,6 @@ export class MedicalEntriesService {
       Doctor: doctor,
     })
   
-    try {
       return await this.medicalEntryRepository.save(newMedicalEntry);
     } catch (error) {
       throw new HttpException('Failed to create medical entry', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,7 +61,7 @@ export class MedicalEntriesService {
 
       return medicalEntries;
     } catch (error) {
-      throw new HttpException('Failed to find medical histories', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Failed to find medical entries', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -86,7 +86,7 @@ export class MedicalEntriesService {
 
       return medicalEntry;
     } catch (error) {
-      throw new HttpException('Failed to find medical history', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Failed to find medical entry', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -95,16 +95,22 @@ export class MedicalEntriesService {
     body: UpdateMedicalEntryDto,
   ): Promise<UpdateResult> {
     try {
-      const medicalEntry: UpdateResult = await this.medicalEntryRepository.update(
-        id,
-        body,
-      );
-      if (medicalEntry.affected === 0) {
-        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      const { medicalHistoryId, doctorId } = body;
+      const medicalEntry = await this.medicalEntryRepository.findOne({ where: { id: medicalHistoryId } });
+      const doctor = await this.doctorRepository.findOne({ where: { id: doctorId } });
+  
+      if (!medicalEntry) {
+        throw new Error('Medical entry not found');
       }
-      return medicalEntry;
-    } catch (error) {
-      throw new HttpException('Failed to update medical history', HttpStatus.INTERNAL_SERVER_ERROR);
+  
+      if (!doctor) {
+        throw new Error('Doctor not found');
+      }
+      
+      return await this.medicalEntryRepository.update(id, {Doctor: doctor});
+    }
+    catch (error) {
+      throw new HttpException('Failed to update medical entry', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -116,7 +122,7 @@ export class MedicalEntriesService {
       }
       return medicalEntry;
     } catch (error) {
-      throw new HttpException('Failed to delete medical history', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Failed to delete medical entry', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

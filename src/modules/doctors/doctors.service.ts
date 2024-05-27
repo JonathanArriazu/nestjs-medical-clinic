@@ -19,7 +19,7 @@ export class DoctorsService {
       const savedDoctor = await this.doctorRepository.save(newDoctor);
 
       if (!savedDoctor) {
-        throw new Error('No se encontró resultado');
+        throw new Error('Failed to find result');
       }
 
       return savedDoctor;

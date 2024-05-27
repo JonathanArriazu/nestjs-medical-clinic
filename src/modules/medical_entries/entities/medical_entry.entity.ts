@@ -15,7 +15,7 @@ export class MedicalEntry extends BaseEntity {
     @JoinColumn({ name: 'medicalHistoryId' })
     medicalHistory: MedicalHistory;
 
-    @ManyToOne(() => Doctor)
+    @ManyToOne(() => Doctor, {onDelete: 'SET NULL'})
     @JoinColumn({ name: 'doctorId' })
     Doctor: Doctor;
 

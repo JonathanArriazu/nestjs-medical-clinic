@@ -30,7 +30,7 @@ export class PatientsService {
 
       const savedPatient = await this.patientRepository.save(patient);
       if (!savedPatient) {
-        throw new Error('No se encontró resultado');
+        throw new Error('Failed to find result');
       }
 
       return savedPatient;
@@ -51,9 +51,9 @@ export class PatientsService {
       patients.forEach(patient => {
         if (patient.medicalHistory && patient.medicalHistory.medicalEntries) {
           patient.medicalHistory.medicalEntries = patient.medicalHistory.medicalEntries.map(entry => {
-            const medicalEntry: MedicalEntry = new MedicalEntry(); 
-            medicalEntry.id = entry.id; 
-            return medicalEntry;
+            const medicalEntry: MedicalEntry = new MedicalEntry(); //Con esto creamos un nuevo objeto medicalEntry
+            medicalEntry.id = entry.id; //Sirve para entregar el id del entry original al nuevo objeto creado
+            return medicalEntry; //Se devuelve el nuevo objeto creado que solamente contiene el medicalEntryId y este objeto reemplaza al objeto original
           });
         }
       });
