@@ -39,25 +39,19 @@ export class PatientsService {
     }
   }
 
-  public async findAllPatients(): Promise<Patient[]> {
+  async findAllPatients(): Promise<Patient[]> {
     try {
-      const patients: Patient[] = await this.patientRepository.find({
-        relations: ['medicalHistory', 'medicalHistory.medicalEntries'],
-      });
-      if (patients.length === 0) {
-        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
-      }
+      const patients: Patient[] = await this.patientRepository
+        .createQueryBuilder('patient')
+        .leftJoinAndSelect('patient.medicalHistory', 'medicalHistory')
+        .leftJoin('medicalHistory.medicalEntries', 'medicalEntry')
+        .select([
+          'patient',
+          'medicalHistory',
+          'medicalEntry.id'
+        ])
+        .getMany();
 
-      patients.forEach(patient => {
-        if (patient.medicalHistory && patient.medicalHistory.medicalEntries) {
-          patient.medicalHistory.medicalEntries = patient.medicalHistory.medicalEntries.map(entry => {
-            const medicalEntry: MedicalEntry = new MedicalEntry(); //Con esto creamos un nuevo objeto medicalEntry
-            medicalEntry.id = entry.id; //Sirve para entregar el id del entry original al nuevo objeto creado
-            return medicalEntry; //Se devuelve el nuevo objeto creado que solamente contiene el medicalEntryId y este objeto reemplaza al objeto original
-          });
-        }
-      });
-  
       return patients;
     } catch (error) {
       throw new HttpException('Failed to find patients', HttpStatus.INTERNAL_SERVER_ERROR);
