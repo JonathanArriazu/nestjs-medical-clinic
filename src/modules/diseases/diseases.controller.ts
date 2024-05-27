@@ -9,26 +9,26 @@ export class DiseasesController {
 
   @Post()
   create(@Body() createDiseaseDto: CreateDiseaseDto) {
-    return this.diseasesService.create(createDiseaseDto);
+    return this.diseasesService.createDisease(createDiseaseDto);
   }
 
   @Get()
   findAll() {
-    return this.diseasesService.findAll();
+    return this.diseasesService.findAllDiseases();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.diseasesService.findOne(+id);
+    return this.diseasesService.findOneDisease(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDiseaseDto: UpdateDiseaseDto) {
-    return this.diseasesService.update(+id, updateDiseaseDto);
+    return this.diseasesService.updateDisease(+id, updateDiseaseDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.diseasesService.remove(+id);
+    return this.diseasesService.removeDisease(+id);
   }
 }

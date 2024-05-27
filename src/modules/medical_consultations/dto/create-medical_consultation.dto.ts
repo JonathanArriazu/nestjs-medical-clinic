@@ -7,6 +7,10 @@ export class CreateMedicalConsultationDto {
     consultationReason: string;
 
     @IsNotEmpty()
+    @IsNumber()
+    diseaseId: number;
+
+    @IsNotEmpty()
     @IsString()
     isConfirmed: boolean;
 

@@ -1,26 +1,88 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateDiseaseDto } from './dto/create-disease.dto';
 import { UpdateDiseaseDto } from './dto/update-disease.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Disease } from './entities/disease.entity';
 
 @Injectable()
 export class DiseasesService {
-  create(createDiseaseDto: CreateDiseaseDto) {
-    return 'This action adds a new disease';
+  constructor(
+    @InjectRepository(Disease)
+    private readonly diseaseRepository: Repository<Disease>,
+  ) {}
+
+  public async createDisease(body: CreateDiseaseDto): Promise<Disease> {
+    
+
+    const newDisease = this.diseaseRepository.create(body);
+
+    try {
+      const savedDisease = await this.diseaseRepository.save(newDisease);
+
+      if (!savedDisease) {
+        throw new Error('Failed to find result');
+      }
+
+      return savedDisease;
+    } catch (error) {
+      throw new HttpException('Failed to create disease', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findAll() {
-    return `This action returns all diseases`;
+  public async findAllDiseases(): Promise<Disease[]> {
+    try {
+      const disease: Disease[] = await this.diseaseRepository.find();
+      if (disease.length === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return disease;
+    } catch (error) {
+      throw new HttpException('Failed to find disease', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} disease`;
+  public async findOneDisease(id: number): Promise<Disease> {
+    try {
+      const disease: Disease = await this.diseaseRepository.findOne({
+        where: [{id}]
+      })
+      if (!disease) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return disease;
+    } catch (error) {
+      throw new HttpException('Failed to find disease', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  update(id: number, updateDiseaseDto: UpdateDiseaseDto) {
-    return `This action updates a #${id} disease`;
+  public async updateDisease(
+    id: number,
+    body: UpdateDiseaseDto,
+  ): Promise<UpdateResult> {
+    try {
+      const disease: UpdateResult = await this.diseaseRepository.update(
+        id,
+        body,
+      );
+      if (disease.affected === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return disease;
+    } catch (error) {
+      throw new HttpException('Failed to update disease', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} disease`;
+  public async removeDisease(id: number): Promise<DeleteResult> {
+    try {
+      const disease: DeleteResult = await this.diseaseRepository.delete(id);
+      if (disease.affected === 0) {
+        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      }
+      return disease;
+    } catch (error) {
+      throw new HttpException('Failed to delete disease', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

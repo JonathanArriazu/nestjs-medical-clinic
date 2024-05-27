@@ -16,10 +16,12 @@ export class MedicalConsultationsService {
   ) {}
 
   public async createMedicalConsultation(body: CreateMedicalConsultationDto): Promise<MedicalConsultation> {
-    const {medicalEntryId} = body;
+    const {medicalEntryId, diseaseId} = body;
     const medicalEntry = await this.medicalEntryRepository.findOne({ where: { id: medicalEntryId}});
+    const disease = await this.medicalEntryRepository.findOne({ where: { id: diseaseId } });
 
-    if (!medicalEntry) {
+
+    if (!medicalEntry || !disease) {
       throw new HttpException('Medical entry not found', HttpStatus.NOT_FOUND);
     }
 
@@ -35,7 +37,8 @@ export class MedicalConsultationsService {
 
     const newMedicalConsultation = this.medicalConsultationRepository.create({
       ...body,
-      MedicalEntry: medicalEntry
+      MedicalEntry: medicalEntry,
+      Disease: disease
     })
 
     try {
@@ -53,7 +56,9 @@ export class MedicalConsultationsService {
 
   public async findAllMedicalConsultations(): Promise<MedicalConsultation[]> {
     try {
-      const medicalConsultation: MedicalConsultation[] = await this.medicalConsultationRepository.find();
+      const medicalConsultation: MedicalConsultation[] = await this.medicalConsultationRepository.find({
+        relations: ['Disease']
+      });
       if (medicalConsultation.length === 0) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
       }
@@ -66,7 +71,8 @@ export class MedicalConsultationsService {
   public async findOneMedicalConsultation(id: number): Promise<MedicalConsultation> {
     try {
       const medicalConsultation: MedicalConsultation = await this.medicalConsultationRepository.findOne({
-        where: [{id}]
+        where: [{id}],
+        relations: ['Disease']
       })
       if (!medicalConsultation) {
         throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
