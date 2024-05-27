@@ -13,35 +13,69 @@ export class MedicalHistoriesService {
     private readonly medicalRepository: Repository<MedicalHistory>,
   ) {}
 
-  public async findAllMedicalHistories(): Promise<MedicalHistory[]> {
+  public async findAllMedicalHistories(withPractices?: boolean, withMedicalConsultations?: boolean): Promise<MedicalHistory[]> {
     try {
-      const medicalHistories: MedicalHistory[] = await this.medicalRepository.find({
-        relations: ['patient', 'medicalEntries']
-      });
-      if (medicalHistories.length === 0) {
-        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      let queryBuilder = this.medicalRepository.createQueryBuilder('medicalHistory')
+        .leftJoinAndSelect('medicalHistory.patient', 'patient')
+        .leftJoinAndSelect('medicalHistory.medicalEntries', 'medicalEntries')
+        .leftJoinAndSelect('medicalEntries.Doctor', 'Doctor')
+        .leftJoinAndSelect('medicalEntries.Practices', 'Practices')
+        .leftJoinAndSelect('medicalEntries.MedicalConsultations', 'MedicalConsultations');
+
+      if (withPractices) {
+        queryBuilder = queryBuilder.leftJoinAndSelect('medicalEntries.Practices', 'Practices')
+          .andWhere('Practices.id IS NOT NULL');
       }
+
+      if (withMedicalConsultations) {
+        queryBuilder = queryBuilder.leftJoinAndSelect('medicalEntries.MedicalConsultations', 'MedicalConsultations')
+          .andWhere('MedicalConsultations.id IS NOT NULL');
+      }
+
+      const medicalHistories = await queryBuilder.getMany();
+
+      if (medicalHistories.length === 0) {
+        throw new HttpException('No se encontraron historias médicas', HttpStatus.BAD_REQUEST);
+      }
+
       return medicalHistories;
     } catch (error) {
-      throw new HttpException('Failed to find medical histories', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Error al buscar historias médicas', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  public async findOneMedicalHistory(id: number): Promise<MedicalHistory> {
+
+  async findOneMedicalHistory(id: number, withPractices?: boolean, withMedicalConsultations?: boolean): Promise<MedicalHistory> {
     try {
-      const medicalHistory: MedicalHistory = await this.medicalRepository.findOne({
-        where: ({id}),
-        relations: ['patient', 'medicalEntries']
-      })
-      if (!medicalHistory) {
-        throw new HttpException('Failed to find result', HttpStatus.BAD_REQUEST);
+      let queryBuilder = this.medicalRepository
+        .createQueryBuilder('medicalHistory')
+        .leftJoinAndSelect('medicalHistory.patient', 'patient')
+        .leftJoinAndSelect('medicalHistory.medicalEntries', 'medicalEntry')
+        .leftJoinAndSelect('medicalEntry.Doctor', 'Doctor')
+        .leftJoinAndSelect('medicalEntry.Practices', 'Practices')
+        .leftJoinAndSelect('medicalEntry.MedicalConsultations', 'MedicalConsultations')
+        .where('medicalHistory.id = :id', { id });
+  
+      if (withPractices) {
+        queryBuilder = queryBuilder.andWhere('Practices.id IS NOT NULL');
       }
+  
+      if (withMedicalConsultations) {
+        queryBuilder = queryBuilder.andWhere('MedicalConsultations.id IS NOT NULL');
+      }
+  
+      const medicalHistory = await queryBuilder.getOne();
+  
+      if (!medicalHistory) {
+        throw new HttpException('No se encontró la historia médica', HttpStatus.BAD_REQUEST);
+      }
+  
       return medicalHistory;
     } catch (error) {
-      throw new HttpException('Failed to find medical history', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Error al buscar la historia médica', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
+  
   public async updateMedicalHistory(
     id: number,
     body: UpdateMedicalHistoryDto,
