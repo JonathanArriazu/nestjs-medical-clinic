@@ -41,30 +41,90 @@ export class MedicalEntriesService {
     }
   }
 
-  async findAllMedicalEntries(): Promise<MedicalEntry[]> {
+  async findAllMedicalEntries(
+    withPractices?: boolean, 
+    withMedicalConsultations?: boolean,
+    fromDate?: Date,
+    toDate?: Date,
+    doctorLicenseNumber?: number,
+    medicalInsurance?: string,
+    patientDNIs?: number[],
+    doctorSpeciality?: string
+  ): Promise<MedicalEntry[]> {
     try {
-      const medicalEntries: MedicalEntry[] = await this.medicalEntryRepository
-        .createQueryBuilder('medicalEntry')
-        .leftJoinAndSelect('medicalEntry.Doctor', 'Doctor')
-        .leftJoinAndSelect('medicalEntry.Practices', 'Practices')
-        .leftJoinAndSelect('medicalEntry.MedicalConsultations', 'MedicalConsultations')
-        .leftJoinAndSelect('MedicalConsultations.Disease', 'Disease')
-        .getMany();
+      let queryBuilder = this.medicalEntryRepository
+            .createQueryBuilder('medicalEntry')
+            .leftJoinAndSelect('medicalEntry.medicalHistory', 'MedicalHistory')
+            .leftJoinAndSelect('MedicalHistory.patient', 'Patient')
+            .leftJoinAndSelect('medicalEntry.Doctor', 'Doctor')
+            .leftJoinAndSelect('medicalEntry.Practices', 'Practices')
+            .leftJoinAndSelect('medicalEntry.MedicalConsultations', 'MedicalConsultations')
+            .leftJoinAndSelect('MedicalConsultations.Disease', 'Disease')
+            .select([
+                'medicalEntry',
+                'Doctor',
+                'MedicalHistory',
+                'Practices',
+                'MedicalConsultations'
+            ])
+            .addSelect(['MedicalHistory.id', 'Patient'])
 
-      medicalEntries.forEach(medicalEntry => {
-        if (medicalEntry.Practices && medicalEntry.Practices.length === 0) {
-          delete medicalEntry.Practices;
-        }
-        if (medicalEntry.MedicalConsultations && medicalEntry.MedicalConsultations.length === 0) {
-          delete medicalEntry.MedicalConsultations;
-        }
-      });
+          if (fromDate || toDate) {
+            if (fromDate && toDate) {
+                queryBuilder = queryBuilder.where('medicalEntry.date BETWEEN :fromDate AND :toDate', { fromDate, toDate });
+            } else if (fromDate) {
+                queryBuilder = queryBuilder.where('medicalEntry.date >= :fromDate', { fromDate });
+            } else {
+                queryBuilder = queryBuilder.where('medicalEntry.date <= :toDate', { toDate });
+            }
+          }
 
-      return medicalEntries;
+          if (withMedicalConsultations) {
+              queryBuilder = queryBuilder.where('MedicalConsultations.id IS NOT NULL');
+          }
+          
+          if (withPractices) {
+              queryBuilder = queryBuilder.where('Practices.id IS NOT NULL');
+          }
+
+          if (doctorLicenseNumber !== undefined && doctorLicenseNumber !== null) {
+            queryBuilder = queryBuilder.andWhere('Doctor.licenseNumber = :doctorLicenseNumber', { doctorLicenseNumber });
+          } else if (doctorLicenseNumber === null) {
+            queryBuilder = queryBuilder.andWhere('Doctor.id IS NULL');
+          }
+
+          if (medicalInsurance) {
+            queryBuilder = queryBuilder.andWhere('Patient.medicalInsurance = :medicalInsurance', { medicalInsurance });
+          }
+
+          if (patientDNIs) {
+            queryBuilder = queryBuilder.where('Patient.dni IN (:...patientDNIs)', { patientDNIs })
+          }
+
+          if (doctorSpeciality) {
+            queryBuilder = queryBuilder.andWhere('Doctor.speciality LIKE :speciality', { speciality: `%${doctorSpeciality}%` });
+        }
+  
+          const medicalEntries: MedicalEntry[] = await queryBuilder.getMany();
+
+        medicalEntries.forEach(medicalEntry => {
+            if (medicalEntry.Practices && medicalEntry.Practices.length === 0) {
+                delete medicalEntry.Practices;
+            }
+            if (medicalEntry.MedicalConsultations && medicalEntry.MedicalConsultations.length === 0) {
+                delete medicalEntry.MedicalConsultations;
+            }
+            if (medicalEntry.medicalHistory && medicalEntry.medicalHistory.patient) {
+                medicalEntry['Patient'] = medicalEntry.medicalHistory.patient;
+                delete medicalEntry.medicalHistory;
+            }
+        });
+
+        return medicalEntries;
     } catch (error) {
-      throw new HttpException('Failed to find medical entries', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException('Failed to find medical entries', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+}
 
   async findOneMedicalEntry(id: number): Promise<MedicalEntry> {
     try {

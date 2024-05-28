@@ -22,9 +22,11 @@ export class DoctorsService {
         throw new Error('Failed to find result');
       }
 
+      console.log(savedDoctor);
+
       return savedDoctor;
     } catch (error) {
-      throw new HttpException('Failed to create patient', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Failed to create doctor', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

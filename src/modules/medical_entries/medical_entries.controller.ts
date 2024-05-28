@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MedicalEntriesService } from './medical_entries.service';
 import { CreateMedicalEntryDto } from './dto/create-medical_entry.dto';
 import { UpdateMedicalEntryDto } from './dto/update-medical_entry.dto';
@@ -13,10 +13,28 @@ export class MedicalEntriesController {
     return await this.medicalEntriesService.createMedicalEntry(body);
   }
 
-  @Get('')
-  findAllMedicalEntries() {
-    return this.medicalEntriesService.findAllMedicalEntries();
-  }
+  @Get()
+    async findAllMedicalEntriesWithPractices(
+      @Query('withPractices') withPractices: boolean,
+      @Query('withMedicalConsultations') withMedicalConsultations: boolean,
+      @Query('fromDate') fromDate: Date,
+      @Query('toDate') toDate: Date,
+      @Query('doctorLicenseNumber') doctorLicenseNumber: number,
+      @Query('medicalInsurance') medicalInsurance: string,
+      @Query('patientDNIs') patientDNIs: number[],
+      @Query('doctorSpeciality') doctorSpeciality: string
+    ): Promise<MedicalEntry[]> {
+      return this.medicalEntriesService.findAllMedicalEntries(
+        withPractices, 
+        withMedicalConsultations, 
+        fromDate, 
+        toDate, 
+        doctorLicenseNumber, 
+        medicalInsurance,
+        patientDNIs,
+        doctorSpeciality
+      );
+    }
 
   @Get(':id')
   findOneMedicalEntry(@Param('id') id: string) {

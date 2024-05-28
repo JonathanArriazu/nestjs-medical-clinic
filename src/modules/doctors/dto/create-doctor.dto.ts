@@ -18,4 +18,8 @@ export class CreateDoctorDto {
     @IsDate()
     entryDate: Date;
 
+    @IsNotEmpty()
+    @IsString()
+    speciality: string;
+
 }
