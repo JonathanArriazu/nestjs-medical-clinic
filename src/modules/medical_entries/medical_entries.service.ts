@@ -49,7 +49,8 @@ export class MedicalEntriesService {
     doctorLicenseNumber?: number,
     medicalInsurance?: string,
     patientDNIs?: number[],
-    doctorSpeciality?: string
+    doctorSpeciality?: string,
+    diseaseName?: string
   ): Promise<MedicalEntry[]> {
     try {
       let queryBuilder = this.medicalEntryRepository
@@ -65,7 +66,8 @@ export class MedicalEntriesService {
                 'Doctor',
                 'MedicalHistory',
                 'Practices',
-                'MedicalConsultations'
+                'MedicalConsultations',
+                'Disease'
             ])
             .addSelect(['MedicalHistory.id', 'Patient'])
             .where('Patient.isDeleted = false');
@@ -104,7 +106,12 @@ export class MedicalEntriesService {
 
           if (doctorSpeciality) {
             queryBuilder = queryBuilder.andWhere('Doctor.speciality LIKE :speciality', { speciality: `%${doctorSpeciality}%` });
-        }
+          }
+
+          if (diseaseName) {
+            console.log(diseaseName)
+            queryBuilder = queryBuilder.andWhere('Disease.name LIKE :name', { name: `%${diseaseName}%` });
+          }
   
           const medicalEntries: MedicalEntry[] = await queryBuilder.getMany();
 

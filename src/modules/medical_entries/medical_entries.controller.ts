@@ -22,7 +22,8 @@ export class MedicalEntriesController {
       @Query('doctorLicenseNumber') doctorLicenseNumber: number,
       @Query('medicalInsurance') medicalInsurance: string,
       @Query('patientDNIs') patientDNIs: number[],
-      @Query('doctorSpeciality') doctorSpeciality: string
+      @Query('doctorSpeciality') doctorSpeciality: string,
+      @Query('diseaseName') diseaseName?: string
     ): Promise<MedicalEntry[]> {
       return this.medicalEntriesService.findAllMedicalEntries(
         withPractices, 
@@ -32,7 +33,8 @@ export class MedicalEntriesController {
         doctorLicenseNumber, 
         medicalInsurance,
         patientDNIs,
-        doctorSpeciality
+        doctorSpeciality,
+        diseaseName
       );
     }
 
