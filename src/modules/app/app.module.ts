@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { Logger, Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { databaseConfig } from 'src/config/database/data.base';
@@ -14,6 +14,7 @@ import { DiseasesModule } from '../diseases/diseases.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { DocumentModule } from '../document/document.module';
+import { RequestsLoggerMiddleware } from 'src/middlewares/requests-logger.middleware';
 
 @Module({
   imports: [
@@ -33,7 +34,11 @@ import { DocumentModule } from '../document/document.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
+export class AppModule implements NestModule {
+
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(RequestsLoggerMiddleware).forRoutes('*');
+  }
 
   private readonly logger = new Logger('AppModule');
 
