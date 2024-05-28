@@ -68,6 +68,7 @@ export class MedicalEntriesService {
                 'MedicalConsultations'
             ])
             .addSelect(['MedicalHistory.id', 'Patient'])
+            .where('Patient.isDeleted = false');
 
           if (fromDate || toDate) {
             if (fromDate && toDate) {
